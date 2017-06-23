@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">TrabalhoFinalChat</string>
+    <string name="add_contact">Adicionar Contato</string>
+    <string name="title_activity_add_contact">AddContactActivity</string>
+    <string name="contact_added">Contato Adicionado!</string>
+    <string name="title_activity_message">MessageActivity</string>
 </resources>
