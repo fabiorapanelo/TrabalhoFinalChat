@@ -3,9 +3,12 @@ package br.edu.ifspsaocarlos.sdm.trabalhofinalchat;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -14,10 +17,11 @@ import java.util.List;
 
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.model.Contact;
 
-public class MainActivity extends ListActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
-    public static List<Contact> contacts = new ArrayList<Contact>();
+    public static List<Contact> contacts = new ArrayList<>();
 
+    private ListView listView;
     private ContactListAdapter adapter;
 
     private static final int REQUEST_ADD_CONTACT = 1;
@@ -26,9 +30,11 @@ public class MainActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setContentView(R.layout.activity_main);
+        listView = (ListView) findViewById(R.id.list_view_contacts);
         adapter = new ContactListAdapter(this, contacts);
-        setListAdapter(adapter);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(this);
     }
 
     @Override
@@ -57,8 +63,7 @@ public class MainActivity extends ListActivity {
         }
     }
 
-    @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
+    public void onItemClick(AdapterView l, View v, int position, long id) {
 
         //contacts.get(position)
         Intent intent = new Intent(this, ChatActivity.class);
@@ -66,4 +71,5 @@ public class MainActivity extends ListActivity {
         startActivityForResult(intent, REQUEST_CHAT);
 
     }
+
 }
