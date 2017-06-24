@@ -9,7 +9,16 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.model.Contact;
+
 public class MainActivity extends ListActivity {
+
+    public static List<Contact> contacts = new ArrayList<Contact>();
+
+    private ContactListAdapter adapter;
 
     private static final int REQUEST_ADD_CONTACT = 1;
     private static final int REQUEST_CHAT = 2;
@@ -17,7 +26,9 @@ public class MainActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+
+        adapter = new ContactListAdapter(this, contacts);
+        setListAdapter(adapter);
     }
 
     @Override
