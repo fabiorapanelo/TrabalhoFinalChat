@@ -34,6 +34,32 @@ public class ContactService extends ServiceBase {
     private static final String FIELD_NAME = "nome_completo";
     private static final String FIELD_NICKNAME = "apelido";
 
+    public void findById(final Context context, final ServiceListener serviceListener, Long id) {
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+        try {
+            String url = this.getUrl(PATH + "/" + id);
+
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                public void onResponse(JSONObject jsonObject) {
+                    try {
+                        Contact contact = ContactService.mapJsonToContact(jsonObject);
+                        serviceListener.onSuccess(contact);
+                    } catch (JSONException ex) {
+                        serviceListener.onError(ex);
+                    }
+                }
+            }, new Response.ErrorListener() {
+                public void onErrorResponse(VolleyError volleyError) {
+                    serviceListener.onError(volleyError);
+                }
+            });
+            queue.add(jsonObjectRequest);
+        } catch (Exception ex) {
+            serviceListener.onError(ex);
+        }
+    }
+
     public void findAll(final Context context, final ServiceListener serviceListener) {
 
         RequestQueue queue = Volley.newRequestQueue(context);
@@ -48,7 +74,7 @@ public class ContactService extends ServiceBase {
 
                         for (int index = 0; index < jsonArray.length(); index++) {
                             JSONObject jsonObject = jsonArray.getJSONObject(index);
-                            Contact contact = ContactService.this.mapJsonToContact(jsonObject);
+                            Contact contact = ContactService.mapJsonToContact(jsonObject);
                             contacts.add(contact);
                         }
 
@@ -93,7 +119,7 @@ public class ContactService extends ServiceBase {
 
                             if(name.toLowerCase().contains(text.toLowerCase()) ||
                                     nickname.toLowerCase().contains(text.toLowerCase())){
-                                Contact contact = ContactService.this.mapJsonToContact(jsonObject);
+                                Contact contact = ContactService.mapJsonToContact(jsonObject);
                                 contacts.add(contact);
                             }
                         }
@@ -114,12 +140,61 @@ public class ContactService extends ServiceBase {
         }
     }
 
-    protected Contact mapJsonToContact(JSONObject jsonObject) throws JSONException{
+    public void save(final Context context, final ServiceListener serviceListener, Contact contact) {
+
+        if(contact == null){
+            serviceListener.onError(new NullPointerException());
+            return;
+        }
+
+        try {
+            JSONObject jsonObject = mapContactToJson(contact);
+            RequestQueue queue = Volley.newRequestQueue(context);
+
+            String url = this.getUrl(PATH);
+            if(contact.getId() > 0){
+                url += "/" + contact.getId();
+            }
+
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
+                public void onResponse(JSONObject jsonObject) {
+                    try {
+                        Contact contact = ContactService.mapJsonToContact(jsonObject);
+                        serviceListener.onSuccess(contact);
+                    } catch (JSONException ex) {
+                        serviceListener.onError(ex);
+                    }
+                }
+            }, new Response.ErrorListener() {
+                public void onErrorResponse(VolleyError volleyError) {
+                    serviceListener.onError(volleyError);
+                }
+            });
+            queue.add(jsonObjectRequest);
+        } catch (Exception ex) {
+            serviceListener.onError(ex);
+        }
+
+    }
+
+    public static Contact mapJsonToContact(JSONObject jsonObject) throws JSONException{
         Contact contact = new Contact();
         contact.setId(jsonObject.getLong(FIELD_ID));
         contact.setName(jsonObject.getString(FIELD_NAME));
         contact.setNickname(jsonObject.getString(FIELD_NICKNAME));
 
         return contact;
+    }
+
+    public static JSONObject mapContactToJson(Contact contact) throws JSONException {
+
+        JSONObject jsonObject = new JSONObject();
+        if(contact.getId() > 0){
+            jsonObject.put(FIELD_ID, String.valueOf(contact.getId()));
+        }
+        jsonObject.put(FIELD_NAME, contact.getName());
+        jsonObject.put(FIELD_NICKNAME, contact.getNickname());
+
+        return jsonObject;
     }
 }

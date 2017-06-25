@@ -5,5 +5,6 @@ package br.edu.ifspsaocarlos.sdm.trabalhofinalchat.services;
  */
 public interface ServiceListener {
     public void onSuccess(Object object);
+
     public void onError(Exception ex);
 }
