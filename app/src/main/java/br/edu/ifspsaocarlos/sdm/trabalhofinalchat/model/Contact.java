@@ -5,13 +5,31 @@ package br.edu.ifspsaocarlos.sdm.trabalhofinalchat.model;
  */
 public class Contact {
 
+    private long id;
     private String name;
+    private String nickname;
 
-    public void setName(String name){
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
         this.name = name;
     }
 
-    public String getName(){
-        return this.name;
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 }

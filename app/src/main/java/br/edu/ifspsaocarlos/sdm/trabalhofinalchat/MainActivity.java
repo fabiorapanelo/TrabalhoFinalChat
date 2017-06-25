@@ -15,26 +15,36 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.dao.ContactDAO;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.model.Contact;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
-    public static List<Contact> contacts = new ArrayList<>();
+    public static List<Contact> contacts;
 
     private ListView listView;
     private ContactListAdapter adapter;
 
-    private static final int REQUEST_ADD_CONTACT = 1;
-    private static final int REQUEST_CHAT = 2;
+    public static final int REQUEST_ADD_CONTACT = 1;
+    public static final int REQUEST_CHAT = 2;
+
+    private ContactDAO contactDAO = ContactDAO.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         listView = (ListView) findViewById(R.id.list_view_contacts);
-        adapter = new ContactListAdapter(this, contacts);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(this);
+
+        this.updateContactList();
+    }
+
+    protected void updateContactList(){
+        this.contacts = contactDAO.findAll();
+        this.adapter = new ContactListAdapter(this, contacts);
+        this.listView.setAdapter(adapter);
+        this.listView.setOnItemClickListener(this);
     }
 
     @Override
@@ -59,15 +69,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (REQUEST_ADD_CONTACT == requestCode && resultCode == RESULT_OK) {
-            Toast.makeText(this, this.getString(R.string.contact_added), Toast.LENGTH_SHORT).show();
+            this.updateContactList();
         }
     }
 
     public void onItemClick(AdapterView l, View v, int position, long id) {
 
-        //contacts.get(position)
+        Contact contact = contacts.get(position);
         Intent intent = new Intent(this, ChatActivity.class);
-        //intent.putExtra("contact_id", contacts.getId());
+        intent.putExtra("contact_id", contact.getId());
         startActivityForResult(intent, REQUEST_CHAT);
 
     }
