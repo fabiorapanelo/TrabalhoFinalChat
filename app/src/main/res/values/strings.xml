@@ -8,4 +8,10 @@
     <string name="search_contact_hint">Nome ou apelido</string>
     <string name="search_contact">Pesquisar</string>
     <string name="error_retrieve_contact">Falha ao recuperar os contatos</string>
+
+    <!-- Add Contact -->
+    <string name="error_add_contact">Erro ao criar o usuário</string>
+    <string name="hint_name">Nome</string>
+    <string name="hint_nickname">Apelido</string>
+    <string name="add_contact_button">Criar usuário</string>
 </resources>

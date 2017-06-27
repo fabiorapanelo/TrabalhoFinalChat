@@ -12,10 +12,17 @@ public class ContactDAO {
 
     //TODO: Remove onmemory list and use SQLITE
     public List<Contact> contacts = new ArrayList<Contact>();
+    public Contact currentUser;
 
     private static ContactDAO instance = new ContactDAO();
 
     private ContactDAO(){
+
+        //Remove in case you want to see create user screen
+        currentUser  = new Contact();
+        currentUser.setId(621);
+        currentUser.setName("Fábio Rapanelo");
+        currentUser.setNickname("fabio");
 
     }
 
@@ -34,6 +41,14 @@ public class ContactDAO {
 
     public void save(Contact contact){
         contacts.add(contact);
+    }
+
+    public Contact getCurrentUser(){
+        return this.currentUser;
+    }
+
+    public void saveCurrentUser(Contact currentUser){
+        this.currentUser = currentUser;
     }
 
     public static ContactDAO getInstance(){

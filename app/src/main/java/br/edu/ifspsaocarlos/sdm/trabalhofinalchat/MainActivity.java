@@ -1,50 +1,76 @@
 package br.edu.ifspsaocarlos.sdm.trabalhofinalchat;
 
-import android.app.ListActivity;
+
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.dao.ContactDAO;
+import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.fragment.AddContactFragment;
+import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.fragment.ViewContactsFragment;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.model.Contact;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class MainActivity extends AppCompatActivity {
 
-    public static List<Contact> contacts;
-
-    private ListView listView;
-    private ContactListAdapter adapter;
+    private ContactDAO contactDAO = ContactDAO.getInstance();
 
     public static final int REQUEST_ADD_CONTACT = 1;
     public static final int REQUEST_CHAT = 2;
 
-    private ContactDAO contactDAO = ContactDAO.getInstance();
+    //Temporary flag
+    private boolean hasUser = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        listView = (ListView) findViewById(R.id.list_view_contacts);
+        if(this.userExists()){
+            this.createViewContactsFragment();
+        } else {
+            this.createAddContactFragment();
+        }
 
-        this.updateContactList();
     }
 
-    protected void updateContactList(){
-        this.contacts = contactDAO.findAll();
-        this.adapter = new ContactListAdapter(this, contacts);
-        this.listView.setAdapter(adapter);
-        this.listView.setOnItemClickListener(this);
+    protected boolean userExists(){
+
+        Contact contact = contactDAO.getCurrentUser();
+
+        if(contact == null){
+            return false;
+        }
+
+        return true;
+    }
+
+    protected void createAddContactFragment(){
+
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.add(R.id.container_fragment, new AddContactFragment());
+        ft.commit();
+
+    }
+
+    protected void createViewContactsFragment(){
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.add(R.id.container_fragment, new ViewContactsFragment());
+        ft.commit();
+    }
+
+    public void replaceViewContactsFragment(){
+
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.container_fragment, new ViewContactsFragment());
+        ft.addToBackStack(null);
+        ft.commitAllowingStateLoss();
     }
 
     @Override
@@ -69,17 +95,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (REQUEST_ADD_CONTACT == requestCode && resultCode == RESULT_OK) {
-            this.updateContactList();
+            this.replaceViewContactsFragment();
         }
     }
 
-    public void onItemClick(AdapterView l, View v, int position, long id) {
 
-        Contact contact = contacts.get(position);
-        Intent intent = new Intent(this, ChatActivity.class);
-        intent.putExtra("contact_id", contact.getId());
-        startActivityForResult(intent, REQUEST_CHAT);
-
-    }
 
 }
