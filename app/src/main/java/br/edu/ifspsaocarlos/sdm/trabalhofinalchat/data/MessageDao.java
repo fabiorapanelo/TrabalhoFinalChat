@@ -50,6 +50,16 @@ public class MessageDao {
         return id;
     }
 
+    public ArrayList<Long> saveAll(ArrayList<Message> messages) {
+        ArrayList ids = new ArrayList();
+
+        for (Message message : messages) {
+            ids.add(save(message));
+        }
+
+        return ids;
+    }
+
     public Message findById(long messageId) {
         database = dbHelper.getReadableDatabase();
         Message message = new Message();

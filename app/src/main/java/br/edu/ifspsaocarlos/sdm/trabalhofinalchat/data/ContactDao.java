@@ -44,6 +44,16 @@ public class ContactDao {
         return id;
     }
 
+    public ArrayList<Long> saveAll(ArrayList<Contact> contacts) {
+        ArrayList ids = new ArrayList();
+
+        for (Contact contact : contacts) {
+            ids.add(save(contact));
+        }
+
+        return ids;
+    }
+
     public Contact findById(long contactId) {
         database = dbHelper.getReadableDatabase();
 
