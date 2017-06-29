@@ -1,6 +1,7 @@
 package br.edu.ifspsaocarlos.sdm.trabalhofinalchat.data;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -15,9 +16,10 @@ import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.model.Message;
  */
 
 public class MessageDao {
-    private static MessageDao instance = new MessageDao();
+
     private SQLiteDatabase database;
     private SQLiteHelper dbHelper;
+    private ContactDao contactDao;
 
     public static final String TABLE_NAME = "message";
     public static final String KEY_ID = "id";
@@ -32,8 +34,9 @@ public class MessageDao {
             KEY_SUBJECT + " TEXT NOT NULL, " +
             KEY_BODY + " TEXT NOT NULL);";
 
-    public static MessageDao getInstance(){
-        return instance;
+    public MessageDao(Context context){
+        this.dbHelper = new SQLiteHelper(context);
+        contactDao = new ContactDao(context);
     }
 
     public long save(Message message) {
@@ -62,6 +65,8 @@ public class MessageDao {
     }
 
     public Message findById(long messageId) {
+
+
         database = dbHelper.getReadableDatabase();
         Message message = new Message();
 
@@ -81,8 +86,8 @@ public class MessageDao {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
                 message.setId(cursor.getInt(0));
-                message.setOrigin(ContactDao.getInstance().findById(cursor.getInt(1)));
-                message.setDestination(ContactDao.getInstance().findById(cursor.getInt(2)));
+                message.setOrigin(contactDao.findById(cursor.getInt(1)));
+                message.setDestination(contactDao.findById(cursor.getInt(2)));
                 message.setSubject(cursor.getString(3));
                 message.setBody(cursor.getString(4));
                 cursor.moveToNext();
@@ -115,8 +120,8 @@ public class MessageDao {
             while (!cursor.isAfterLast()) {
                 Message message = new Message();
                 message.setId(cursor.getInt(0));
-                message.setOrigin(ContactDao.getInstance().findById(cursor.getInt(1)));
-                message.setDestination(ContactDao.getInstance().findById(cursor.getInt(2)));
+                message.setOrigin(contactDao.findById(cursor.getInt(1)));
+                message.setDestination(contactDao.findById(cursor.getInt(2)));
                 message.setSubject(cursor.getString(3));
                 message.setBody(cursor.getString(4));
                 messages.add(message);
@@ -153,8 +158,8 @@ public class MessageDao {
             while (!cursor.isAfterLast()) {
                 Message message = new Message();
                 message.setId(cursor.getInt(0));
-                message.setOrigin(ContactDao.getInstance().findById(cursor.getInt(1)));
-                message.setDestination(ContactDao.getInstance().findById(cursor.getInt(2)));
+                message.setOrigin(contactDao.findById(cursor.getInt(1)));
+                message.setDestination(contactDao.findById(cursor.getInt(2)));
                 message.setSubject(cursor.getString(3));
                 message.setBody(cursor.getString(4));
                 messages.add(message);
@@ -190,8 +195,8 @@ public class MessageDao {
             if (cursor.moveToFirst()) {
 
                 message = new Message();
-                message.setOrigin(ContactDao.getInstance().findById(cursor.getInt(1)));
-                message.setDestination(ContactDao.getInstance().findById(cursor.getInt(2)));
+                message.setOrigin(contactDao.findById(cursor.getInt(1)));
+                message.setDestination(contactDao.findById(cursor.getInt(2)));
                 message.setSubject(cursor.getString(3));
                 message.setBody(cursor.getString(4));
 

@@ -1,6 +1,7 @@
 package br.edu.ifspsaocarlos.sdm.trabalhofinalchat.data;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -14,7 +15,7 @@ import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.model.Contact;
  */
 
 public class ContactDao {
-    private static ContactDao instance = new ContactDao();
+
     private SQLiteDatabase database;
     private SQLiteHelper dbHelper;
 
@@ -27,8 +28,8 @@ public class ContactDao {
                                                 KEY_NAME + " TEXT NOT NULL, " +
                                                 KEY_NICKNAME + " TEXT NOT NULL);";
 
-    public static ContactDao getInstance(){
-        return instance;
+    public ContactDao(Context context){
+        this.dbHelper = new SQLiteHelper(context);
     }
 
     public long save(Contact contact) {

@@ -41,7 +41,7 @@ public class SearchNewMessagesService extends Service implements Runnable {
                 Thread.sleep(3000);
 
                 ContactDAO contactDAO = ContactDAO.getInstance();
-                final MessageDao messageDao = MessageDao.getInstance();
+                final MessageDao messageDao = new MessageDao(this);
 
                 Contact currentUser = contactDAO.getCurrentUser();
 

@@ -24,6 +24,12 @@ public class ContactDAO {
         currentUser.setName("Fábio Rapanelo");
         currentUser.setNickname("fabio");
 
+
+        //currentUser  = new Contact();
+        //currentUser.setId(660);
+        //currentUser.setName("Robson Teixeira");
+        //currentUser.setNickname("robson.teixeira");
+
     }
 
     public List<Contact> findAll(){

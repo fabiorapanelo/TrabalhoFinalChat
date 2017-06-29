@@ -14,9 +14,6 @@ import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.model.Message;
 public class SQLiteHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "chat.db";
     public static final int DATABASE_VERSION = 1;
-    public UserInfoDao userInfoDao = new UserInfoDao();
-    public ContactDao contactDao = new ContactDao();
-    public MessageDao messageDao = new MessageDao();
 
     public SQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
