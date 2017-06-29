@@ -1,6 +1,7 @@
 package br.edu.ifspsaocarlos.sdm.trabalhofinalchat;
 
 
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -13,10 +14,13 @@ import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.dao.ContactDAO;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.fragment.AddContactFragment;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.fragment.ViewContactsFragment;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.model.Contact;
+import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.services.SearchNewMessagesService;
 
 public class MainActivity extends AppCompatActivity {
 
     private ContactDAO contactDAO = ContactDAO.getInstance();
+
+    private Intent serviceIntent;
 
     public static final int REQUEST_ADD_CONTACT = 1;
     public static final int REQUEST_CHAT = 2;
@@ -35,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
             this.createAddContactFragment();
         }
 
+        serviceIntent = new Intent(getApplicationContext(), SearchNewMessagesService.class);
+        startService(serviceIntent);
     }
 
     protected boolean userExists(){
@@ -99,6 +105,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    protected void onDestroy() {
+        stopService(serviceIntent);
+        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        nm.cancelAll();
+        super.onDestroy();
+    }
 
 
 }

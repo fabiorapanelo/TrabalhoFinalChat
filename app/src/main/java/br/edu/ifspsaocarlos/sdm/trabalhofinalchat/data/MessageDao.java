@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.model.Contact;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.model.Message;
 
 /**
@@ -50,7 +51,7 @@ public class MessageDao {
         return id;
     }
 
-    public ArrayList<Long> saveAll(ArrayList<Message> messages) {
+    public ArrayList<Long> saveAll(List<Message> messages) {
         ArrayList ids = new ArrayList();
 
         for (Message message : messages) {
@@ -128,7 +129,7 @@ public class MessageDao {
         return messages;
     }
 
-    public List<Message> findByContactId(long contactId) {
+    public List<Message> findByContact(Contact contact) {
         database = dbHelper.getReadableDatabase();
         List<Message> messages = new ArrayList<>();
 
@@ -141,10 +142,8 @@ public class MessageDao {
         String having = null;
         String orderBy = KEY_ID;
 
-        if (contactId > 0) {
-            where = KEY_ORIGIN_ID + " = ? OR " + KEY_DESTINATION_ID + " = ? ";
-            argWhere = new String[]{"" + contactId, "" + contactId};
-        }
+        where = KEY_ORIGIN_ID + " = ? OR " + KEY_DESTINATION_ID + " = ? ";
+        argWhere = new String[]{String.valueOf(contact.getId()), String.valueOf(contact.getId())};
 
         cursor = database.query(TABLE_NAME, cols, where , argWhere, groupBy, having, orderBy);
 
@@ -166,5 +165,41 @@ public class MessageDao {
         database.close();
 
         return messages;
+    }
+
+    public Message findLastMessage(Contact contact) {
+        database = dbHelper.getReadableDatabase();
+        Message message = null;
+
+        Cursor cursor;
+
+        String[] cols = new String[] {KEY_ID, KEY_ORIGIN_ID, KEY_DESTINATION_ID, KEY_SUBJECT, KEY_BODY};
+        String where = null;
+        String[] argWhere = null;
+        String groupBy = null;
+        String having = null;
+        String orderBy = KEY_ID + " DESC";
+
+        where = KEY_ORIGIN_ID + " = ? OR " + KEY_DESTINATION_ID + " = ? ";
+        argWhere = new String[]{String.valueOf(contact.getId()), String.valueOf(contact.getId())};
+
+        cursor = database.query(TABLE_NAME, cols, where , argWhere, groupBy, having, orderBy);
+
+        if (cursor!=null)
+        {
+            if (cursor.moveToFirst()) {
+
+                message = new Message();
+                message.setOrigin(ContactDao.getInstance().findById(cursor.getInt(1)));
+                message.setDestination(ContactDao.getInstance().findById(cursor.getInt(2)));
+                message.setSubject(cursor.getString(3));
+                message.setBody(cursor.getString(4));
+
+            }
+            cursor.close();
+        }
+        database.close();
+
+        return message;
     }
 }
