@@ -20,11 +20,16 @@
         <activity
             android:name=".AddContactActivity"
             android:label="@string/title_activity_add_contact"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".ChatActivity"
             android:label="@string/title_activity_message"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme" />
+
+        <service
+            android:name=".services.SearchNewMessagesService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>
