@@ -19,7 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.dao.ContactDAO;
+import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.data.ContactDao;
+import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.data.UserInfoDao;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.model.Contact;
+import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.model.UserInfo;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.services.ContactService;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.services.ServiceListener;
 
@@ -30,6 +33,7 @@ public class AddContactActivity extends AppCompatActivity {
     private EditText searchContactText;
     private ContactService contactService = new ContactService();
     private List<Contact> contacts;
+    private ContactDao contactDao = new ContactDao(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,8 +72,7 @@ public class AddContactActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                ContactDAO contactDAO = ContactDAO.getInstance();
-                contactDAO.save(contacts.get(i));
+                contactDao.save(contacts.get(i));
                 AddContactActivity.this.setResult(AddContactActivity.RESULT_OK);
                 AddContactActivity.this.finish();
             }

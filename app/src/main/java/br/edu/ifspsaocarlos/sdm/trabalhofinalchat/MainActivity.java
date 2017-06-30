@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.dao.ContactDAO;
+import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.data.UserInfoDao;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.fragment.AddContactFragment;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.fragment.ViewContactsFragment;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.model.Contact;
@@ -18,7 +19,7 @@ import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.services.SearchNewMessagesServ
 
 public class MainActivity extends AppCompatActivity {
 
-    private ContactDAO contactDAO = ContactDAO.getInstance();
+    private UserInfoDao userInfoDao = new UserInfoDao(this);
 
     private Intent serviceIntent;
 
@@ -27,6 +28,10 @@ public class MainActivity extends AppCompatActivity {
 
     //Temporary flag
     private boolean hasUser = false;
+
+    public MainActivity(){
+        userInfoDao = new UserInfoDao(this);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
     protected boolean userExists(){
 
-        Contact contact = contactDAO.getCurrentUser();
+        Contact contact = userInfoDao.find();
 
         if(contact == null){
             return false;

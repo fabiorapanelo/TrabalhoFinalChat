@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -196,6 +197,7 @@ public class MessageDao {
 
                 message = new Message();
                 message.setOrigin(contactDao.findById(cursor.getInt(1)));
+
                 message.setDestination(contactDao.findById(cursor.getInt(2)));
                 message.setSubject(cursor.getString(3));
                 message.setBody(cursor.getString(4));

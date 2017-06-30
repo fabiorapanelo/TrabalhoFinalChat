@@ -1,6 +1,7 @@
 package br.edu.ifspsaocarlos.sdm.trabalhofinalchat.data;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -12,7 +13,7 @@ import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.model.UserInfo;
  */
 
 public class UserInfoDao {
-    private static UserInfoDao instance = new UserInfoDao();
+
     private SQLiteDatabase database;
     private SQLiteHelper dbHelper;
 
@@ -25,8 +26,8 @@ public class UserInfoDao {
             KEY_NAME + " TEXT NOT NULL, " +
             KEY_NICKNAME + " TEXT NOT NULL);";
 
-    public static UserInfoDao getInstance(){
-        return instance;
+    public UserInfoDao (Context context){
+        this.dbHelper = new SQLiteHelper(context);
     }
 
     public long save(Contact userInfo) {
@@ -44,7 +45,7 @@ public class UserInfoDao {
 
     public Contact find() {
         database = dbHelper.getReadableDatabase();
-        Contact userInfo = new Contact();
+        Contact userInfo = null;
 
         Cursor cursor;
 
@@ -61,6 +62,7 @@ public class UserInfoDao {
         {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
+                userInfo = new Contact();
                 userInfo.setId(cursor.getInt(0));
                 userInfo.setName(cursor.getString(1));
                 userInfo.setNickname(cursor.getString(2));

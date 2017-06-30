@@ -8,13 +8,12 @@ import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.model.Contact;
 /**
  * Created by fabio on 25/06/2017.
  */
+@Deprecated
 public class ContactDAO {
 
     //TODO: Remove onmemory list and use SQLITE
     public List<Contact> contacts = new ArrayList<Contact>();
     public Contact currentUser;
-
-    private static ContactDAO instance = new ContactDAO();
 
     private ContactDAO(){
 
@@ -57,7 +56,4 @@ public class ContactDAO {
         this.currentUser = currentUser;
     }
 
-    public static ContactDAO getInstance(){
-        return instance;
-    }
 }

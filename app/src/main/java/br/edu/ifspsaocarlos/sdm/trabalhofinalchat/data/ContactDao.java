@@ -4,11 +4,13 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.model.Contact;
+import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.model.UserInfo;
 
 /**
  * Created by Robson on 23/06/2017.
@@ -18,6 +20,7 @@ public class ContactDao {
 
     private SQLiteDatabase database;
     private SQLiteHelper dbHelper;
+    private UserInfoDao userInfoDao;
 
     public static final String TABLE_NAME = "contact";
     public static final String KEY_ID = "id";
@@ -30,6 +33,7 @@ public class ContactDao {
 
     public ContactDao(Context context){
         this.dbHelper = new SQLiteHelper(context);
+        this.userInfoDao = new UserInfoDao(context);
     }
 
     public long save(Contact contact) {
@@ -56,6 +60,17 @@ public class ContactDao {
     }
 
     public Contact findById(long contactId) {
+
+        Log.d("ContactDao", String.valueOf(contactId));
+
+        Contact currentUser = userInfoDao.find();
+
+        Log.d("ContactDao#2", String.valueOf(currentUser.getId()));
+
+        if(currentUser != null && currentUser.getId() == contactId){
+            return currentUser;
+        }
+
         database = dbHelper.getReadableDatabase();
 
         Cursor cursor;
@@ -75,12 +90,10 @@ public class ContactDao {
 
         if (cursor!=null)
         {
-            cursor.moveToFirst();
-            while (!cursor.isAfterLast()) {
+            if (cursor.moveToFirst()) {
                 contact.setId(cursor.getInt(0));
                 contact.setName(cursor.getString(1));
                 contact.setNickname(cursor.getString(2));
-                cursor.moveToNext();
             }
             cursor.close();
         }

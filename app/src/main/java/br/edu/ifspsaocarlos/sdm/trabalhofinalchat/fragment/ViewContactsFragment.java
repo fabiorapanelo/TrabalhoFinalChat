@@ -19,6 +19,7 @@ import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.ContactListAdapter;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.MainActivity;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.R;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.dao.ContactDAO;
+import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.data.ContactDao;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.model.Contact;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.services.ContactService;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.services.ServiceListener;
@@ -35,8 +36,17 @@ public class ViewContactsFragment extends Fragment  implements AdapterView.OnIte
     private ListView listView;
     private ContactListAdapter adapter;
 
-    private ContactDAO contactDAO = ContactDAO.getInstance();
+    private ContactDao contactDao;
 
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof MainActivity) {
+            mainActivity = (MainActivity) context;
+            contactDao = new ContactDao(mainActivity);
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,20 +61,14 @@ public class ViewContactsFragment extends Fragment  implements AdapterView.OnIte
     }
 
     protected void updateContactList(){
-        this.contacts = contactDAO.findAll();
+        this.contacts = contactDao.findAll();
         this.adapter = new ContactListAdapter(mainActivity, contacts);
         this.listView.setAdapter(adapter);
         this.listView.setOnItemClickListener(this);
     }
 
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof MainActivity) {
-            mainActivity = (MainActivity) context;
-        }
-    }
+
 
     @Override
     public void onDetach() {

@@ -14,7 +14,9 @@ import java.util.List;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.ChatActivity;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.R;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.dao.ContactDAO;
+import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.data.ContactDao;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.data.MessageDao;
+import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.data.UserInfoDao;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.model.Contact;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.model.Message;
 
@@ -24,6 +26,9 @@ public class SearchNewMessagesService extends Service implements Runnable {
     public IBinder onBind(Intent intent) {
         return null;
     }
+
+    private ContactDao contactDao = new ContactDao(this);
+    private UserInfoDao userInfoDao = new UserInfoDao(this);
 
     public void onCreate() {
         super.onCreate();
@@ -40,12 +45,16 @@ public class SearchNewMessagesService extends Service implements Runnable {
             try {
                 Thread.sleep(3000);
 
-                ContactDAO contactDAO = ContactDAO.getInstance();
+
                 final MessageDao messageDao = new MessageDao(this);
 
-                Contact currentUser = contactDAO.getCurrentUser();
+                Contact currentUser = userInfoDao.find();
 
-                for(Contact contact: contactDAO.findAll()){
+                Log.d("SearchNewMessagesServic", "User#" + currentUser.getId());
+
+                for(Contact contact: contactDao.findAll()){
+
+                    Log.d("SearchNewMessagesServic", "Contact#" + contact.getId());
 
                     Message message = messageDao.findLastMessage(contact);
                     if(message == null){
@@ -61,6 +70,8 @@ public class SearchNewMessagesService extends Service implements Runnable {
                             List<Message> messages = (List<Message>) object;
 
                             if(messages != null && messages.size() > 0) {
+
+                                Log.d("SearchNewMessagesServic", "Messages#" + messages.size());
 
                                 Message message = messages.get(0);
 
@@ -87,7 +98,7 @@ public class SearchNewMessagesService extends Service implements Runnable {
 
                         @Override
                         public void onError(Exception ex) {
-
+                            Log.d("SearchNewMessagesServic", ex.getMessage(), ex);
                         }
                     }, message);
 

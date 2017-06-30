@@ -1,6 +1,7 @@
 package br.edu.ifspsaocarlos.sdm.trabalhofinalchat.services;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -34,7 +35,7 @@ public class MessageService extends ServiceBase {
     private static final String FIELD_DESTINATION = "destino";
     private static final String FIELD_DESTINATION_ID = "destino_id";
     private static final String FIELD_SUBJECT = "assunto";
-    private static final String FIELD_BODY = "body";
+    private static final String FIELD_BODY = "corpo";
 
     public void save(final Context context, final ServiceListener serviceListener, final Message message) {
 
@@ -82,6 +83,8 @@ public class MessageService extends ServiceBase {
             RequestQueue queue = Volley.newRequestQueue(context);
 
             String url = this.getUrl(PATH + "/" + message.getId() + "/" + message.getOrigin().getId() + "/" + message.getDestination().getId());
+
+            Log.d("MessageService", "URL#" + url);
 
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                 public void onResponse(JSONObject jsonObject) {
