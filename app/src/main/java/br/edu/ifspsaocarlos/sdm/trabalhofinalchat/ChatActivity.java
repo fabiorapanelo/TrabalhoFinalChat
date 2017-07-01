@@ -3,21 +3,29 @@ package br.edu.ifspsaocarlos.sdm.trabalhofinalchat;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-public class ChatActivity extends AppCompatActivity {
+import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.services.StateManagement;
+
+public class ChatActivity extends BaseActivity {
+
+    protected StateManagement stateManagement = StateManagement.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
 
-        if (getSupportActionBar() != null){
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        long contactId = getIntent().getLongExtra("contact_id", 0);
+
+        //Finish activity if the contact is invalid
+        if(contactId == 0){
+            finish();
         }
+
+        stateManagement.setContactOpened(contactId);
+
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -29,4 +37,11 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onDestroy() {
+
+        stateManagement.clearContactOpened();
+
+        super.onDestroy();
+    }
 }

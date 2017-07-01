@@ -26,8 +26,9 @@ public class SearchNewMessagesService extends Service implements Runnable {
         return null;
     }
 
-    private ContactDao contactDao = new ContactDao(this);
-    private UserInfoDao userInfoDao = new UserInfoDao(this);
+    protected StateManagement stateManagement = StateManagement.getInstance();
+    protected ContactDao contactDao = new ContactDao(this);
+    protected UserInfoDao userInfoDao = new UserInfoDao(this);
 
     public void onCreate() {
         super.onCreate();
@@ -49,63 +50,65 @@ public class SearchNewMessagesService extends Service implements Runnable {
 
                 Contact currentUser = userInfoDao.find();
 
-                Log.d("SearchNewMessagesServic", "User#" + currentUser.getId());
-
                 for(Contact contact: contactDao.findAll()){
 
-                    Log.d("SearchNewMessagesServic", "Contact#" + contact.getId());
+                    long contactOpened = stateManagement.getContactOpened();
 
-                    Message message = messageDao.findLastMessage(contact);
-                    if(message == null){
-                        message = this.createDefaultMessage(contact, currentUser);
-                    } else {
-                        message.setId(message.getId() + 1);
-                    }
+                    if(contact.getId() != contactOpened){
 
-                    MessageService messageService = new MessageService();
-                    messageService.getMessages(this, new ServiceListener() {
-                        @Override
-                        public void onSuccess(Object object) {
-                            //If there is messages, show the notification
+                        Message message = messageDao.findLastMessage(contact);
+                        if(message == null){
+                            message = this.createDefaultMessage(contact, currentUser);
+                        } else {
+                            message.setId(message.getId() + 1);
+                        }
 
-                            List<Message> messages = (List<Message>) object;
+                        MessageService messageService = new MessageService();
+                        messageService.getMessages(this, new ServiceListener() {
+                            @Override
+                            public void onSuccess(Object object) {
+                                //If there is messages, show the notification
 
-                            if(messages != null && messages.size() > 0) {
+                                List<Message> messages = (List<Message>) object;
 
-                                Message message = messages.get(0);
+                                if(messages != null && messages.size() > 0) {
 
-                                NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                                Intent intent = new Intent(SearchNewMessagesService.this, ChatActivity.class);
-                                intent.putExtra("contact_id", message.getOrigin().getId());
+                                    Message message = messages.get(0);
 
-                                PendingIntent p = PendingIntent.getActivity(SearchNewMessagesService.this, 0, intent, 0);
-                                Notification.Builder builder = new Notification.Builder(SearchNewMessagesService.this);
-                                builder.setSmallIcon(R.drawable.ic_contato);
-                                builder.setTicker("Nova mensagem de " + message.getOrigin().getName());
-                                builder.setContentTitle("Nova mensagem de " + message.getOrigin().getName());
+                                    NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                                    Intent intent = new Intent(SearchNewMessagesService.this, ChatActivity.class);
+                                    intent.putExtra("contact_id", message.getOrigin().getId());
 
-                                if(messages.size() == 1){
-                                    builder.setContentText("Voce tem " + messages.size() + " mensagens");
-                                } else {
-                                    builder.setContentText("Voce tem 1 mensagem");
+                                    PendingIntent p = PendingIntent.getActivity(SearchNewMessagesService.this, 0, intent, 0);
+                                    Notification.Builder builder = new Notification.Builder(SearchNewMessagesService.this);
+                                    builder.setSmallIcon(R.drawable.ic_contato);
+                                    builder.setTicker("Nova mensagem de " + message.getOrigin().getName());
+                                    builder.setContentTitle("Nova mensagem de " + message.getOrigin().getName());
+
+                                    if(messages.size() == 1){
+                                        builder.setContentText("Voce tem " + messages.size() + " mensagens");
+                                    } else {
+                                        builder.setContentText("Voce tem 1 mensagem");
+                                    }
+
+                                    builder.setWhen(System.currentTimeMillis());
+                                    builder.setContentIntent(p);
+                                    builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_contato));
+                                    Notification notification = builder.build();
+                                    notification.vibrate = new long[]{100, 250};
+                                    nm.notify(R.mipmap.ic_launcher, notification);
+
+                                    messageDao.saveAll(messages);
                                 }
-
-                                builder.setWhen(System.currentTimeMillis());
-                                builder.setContentIntent(p);
-                                builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_contato));
-                                Notification notification = builder.build();
-                                notification.vibrate = new long[]{100, 250};
-                                nm.notify(R.mipmap.ic_launcher, notification);
-
-                                messageDao.saveAll(messages);
                             }
-                        }
 
-                        @Override
-                        public void onError(Exception ex) {
-                            Log.d("SearchNewMessagesServic", ex.getMessage(), ex);
-                        }
-                    }, message);
+                            @Override
+                            public void onError(Exception ex) {
+                                Log.d("SearchNewMessagesServic", ex.getMessage(), ex);
+                            }
+                        }, message);
+
+                    }
 
                 }
 

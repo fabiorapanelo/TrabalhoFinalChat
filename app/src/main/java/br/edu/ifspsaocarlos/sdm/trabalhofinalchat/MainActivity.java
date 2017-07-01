@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.dao.ContactDAO;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.data.UserInfoDao;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.fragment.AddContactFragment;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.fragment.ViewContactsFragment;

@@ -61,11 +61,7 @@ public class ContactDao {
 
     public Contact findById(long contactId) {
 
-        Log.d("ContactDao", String.valueOf(contactId));
-
         Contact currentUser = userInfoDao.find();
-
-        Log.d("ContactDao#2", String.valueOf(currentUser.getId()));
 
         if(currentUser != null && currentUser.getId() == contactId){
             return currentUser;

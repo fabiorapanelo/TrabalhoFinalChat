@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 
 import java.util.List;
@@ -18,11 +17,8 @@ import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.ChatActivity;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.ContactListAdapter;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.MainActivity;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.R;
-import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.dao.ContactDAO;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.data.ContactDao;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.model.Contact;
-import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.services.ContactService;
-import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.services.ServiceListener;
 
 /**
  * Created by fabio on 26/06/2017.

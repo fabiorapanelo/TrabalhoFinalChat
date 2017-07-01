@@ -13,7 +13,6 @@ import android.widget.Toast;
 
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.MainActivity;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.R;
-import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.dao.ContactDAO;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.data.UserInfoDao;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.model.Contact;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.services.ContactService;
