@@ -59,6 +59,8 @@ public class SearchNewMessagesService extends Service implements Runnable {
                     Message message = messageDao.findLastMessage(contact);
                     if(message == null){
                         message = this.createDefaultMessage(contact, currentUser);
+                    } else {
+                        message.setId(message.getId() + 1);
                     }
 
                     MessageService messageService = new MessageService();
@@ -71,8 +73,6 @@ public class SearchNewMessagesService extends Service implements Runnable {
 
                             if(messages != null && messages.size() > 0) {
 
-                                Log.d("SearchNewMessagesServic", "Messages#" + messages.size());
-
                                 Message message = messages.get(0);
 
                                 NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -84,7 +84,13 @@ public class SearchNewMessagesService extends Service implements Runnable {
                                 builder.setSmallIcon(R.drawable.ic_contato);
                                 builder.setTicker("Nova mensagem de " + message.getOrigin().getName());
                                 builder.setContentTitle("Nova mensagem de " + message.getOrigin().getName());
-                                builder.setContentText("Voce tem " + messages.size() + "mensagens");
+
+                                if(messages.size() == 1){
+                                    builder.setContentText("Voce tem " + messages.size() + " mensagens");
+                                } else {
+                                    builder.setContentText("Voce tem 1 mensagem");
+                                }
+
                                 builder.setWhen(System.currentTimeMillis());
                                 builder.setContentIntent(p);
                                 builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_contato));

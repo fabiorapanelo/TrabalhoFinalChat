@@ -196,8 +196,8 @@ public class MessageDao {
             if (cursor.moveToFirst()) {
 
                 message = new Message();
+                message.setId(cursor.getInt(0));
                 message.setOrigin(contactDao.findById(cursor.getInt(1)));
-
                 message.setDestination(contactDao.findById(cursor.getInt(2)));
                 message.setSubject(cursor.getString(3));
                 message.setBody(cursor.getString(4));
