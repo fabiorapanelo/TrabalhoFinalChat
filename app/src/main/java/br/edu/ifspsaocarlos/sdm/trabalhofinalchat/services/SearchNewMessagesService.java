@@ -13,7 +13,6 @@ import java.util.List;
 
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.ChatActivity;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.R;
-import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.dao.ContactDAO;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.data.ContactDao;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.data.MessageDao;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.data.UserInfoDao;
