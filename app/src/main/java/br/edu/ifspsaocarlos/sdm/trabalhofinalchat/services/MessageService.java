@@ -53,7 +53,7 @@ public class MessageService extends ServiceBase {
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
                 public void onResponse(JSONObject jsonObject) {
                     try {
-                        Message Message = MessageService.mapJsonToMessage(jsonObject);
+                        Message message = MessageService.mapJsonToMessage(jsonObject);
                         serviceListener.onSuccess(message);
                     } catch (JSONException ex) {
                         serviceListener.onError(ex);

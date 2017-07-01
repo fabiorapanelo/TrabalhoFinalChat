@@ -44,7 +44,7 @@ public class ContactDao {
         values.put(KEY_NAME, contact.getName());
         values.put(KEY_NICKNAME, contact.getNickname());
 
-        long id = database.insert(TABLE_NAME, null, values);
+        long id = database.insertWithOnConflict(TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
         database.close();
         return id;
     }

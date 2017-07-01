@@ -38,7 +38,7 @@ public class UserInfoDao {
         values.put(KEY_NAME, userInfo.getName());
         values.put(KEY_NICKNAME, userInfo.getNickname());
 
-        long id = database.insert(TABLE_NAME, null, values);
+        long id = database.insertWithOnConflict(TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
         database.close();
         return id;
     }

@@ -50,7 +50,7 @@ public class MessageDao {
         values.put(KEY_SUBJECT, message.getSubject());
         values.put(KEY_BODY, message.getBody());
 
-        long id = database.insert(TABLE_NAME, null, values);
+        long id = database.insertWithOnConflict(TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
         database.close();
         return id;
     }
@@ -135,7 +135,7 @@ public class MessageDao {
         return messages;
     }
 
-    public List<Message> findByContact(Contact contact) {
+    public List<Message> findByContact(Contact contact, long lastMessageID) {
         database = dbHelper.getReadableDatabase();
         List<Message> messages = new ArrayList<>();
 
@@ -148,8 +148,8 @@ public class MessageDao {
         String having = null;
         String orderBy = KEY_ID;
 
-        where = KEY_ORIGIN_ID + " = ? OR " + KEY_DESTINATION_ID + " = ? ";
-        argWhere = new String[]{String.valueOf(contact.getId()), String.valueOf(contact.getId())};
+        where = "(" + KEY_ORIGIN_ID + " = ? OR " + KEY_DESTINATION_ID + " = ? ) AND " + KEY_ID + " > ?";
+        argWhere = new String[]{String.valueOf(contact.getId()), String.valueOf(contact.getId()), String.valueOf(lastMessageID)};
 
         cursor = database.query(TABLE_NAME, cols, where , argWhere, groupBy, having, orderBy);
 
