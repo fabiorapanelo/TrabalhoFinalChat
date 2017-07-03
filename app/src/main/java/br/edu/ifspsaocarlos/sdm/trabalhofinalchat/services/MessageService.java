@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.data.ContactDao;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.model.Contact;
 import br.edu.ifspsaocarlos.sdm.trabalhofinalchat.model.Message;
 
@@ -37,6 +38,10 @@ public class MessageService extends ServiceBase {
     private static final String FIELD_SUBJECT = "assunto";
     private static final String FIELD_BODY = "corpo";
 
+    public void setContext(Context context) {
+
+    }
+
     public void save(final Context context, final ServiceListener serviceListener, final Message message) {
 
         if(message == null){
@@ -53,7 +58,7 @@ public class MessageService extends ServiceBase {
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
                 public void onResponse(JSONObject jsonObject) {
                     try {
-                        Message message = MessageService.mapJsonToMessage(jsonObject);
+                        Message message = MessageService.mapJsonToMessage(jsonObject, context);
                         serviceListener.onSuccess(message);
                     } catch (JSONException ex) {
                         serviceListener.onError(ex);
@@ -96,7 +101,7 @@ public class MessageService extends ServiceBase {
 
                         for (int index = 0; index < jsonArray.length(); index++) {
                             JSONObject jsonMessage = jsonArray.getJSONObject(index);
-                            Message message = MessageService.mapJsonToMessage(jsonMessage);
+                            Message message = MessageService.mapJsonToMessage(jsonMessage, context);
                             messages.add(message);
                         }
 
@@ -128,7 +133,7 @@ public class MessageService extends ServiceBase {
         return jsonObject;
     }
 
-    public static Message mapJsonToMessage(JSONObject jsonObject) throws JSONException {
+    public static Message mapJsonToMessage(JSONObject jsonObject, Context context) throws JSONException {
 
         Message message = new Message();
 
@@ -136,13 +141,20 @@ public class MessageService extends ServiceBase {
         message.setSubject(jsonObject.getString(FIELD_SUBJECT));
         message.setBody(jsonObject.getString(FIELD_BODY));
 
-        JSONObject jsonOrigin = (JSONObject) jsonObject.get(FIELD_ORIGIN);
-        Contact contactOrigin = ContactService.mapJsonToContact(jsonOrigin);
-        message.setOrigin(contactOrigin);
+        if (jsonObject.has(FIELD_ORIGIN) && jsonObject.has(FIELD_DESTINATION)) {
+            JSONObject jsonOrigin = (JSONObject) jsonObject.get(FIELD_ORIGIN);
+            Contact contactOrigin = ContactService.mapJsonToContact(jsonOrigin);
+            message.setOrigin(contactOrigin);
 
-        JSONObject jsonDestination = (JSONObject) jsonObject.get(FIELD_DESTINATION);
-        Contact contactDestination = ContactService.mapJsonToContact(jsonDestination);
-        message.setDestination(contactDestination);
+            JSONObject jsonDestination = (JSONObject) jsonObject.get(FIELD_DESTINATION);
+            Contact contactDestination = ContactService.mapJsonToContact(jsonDestination);
+            message.setDestination(contactDestination);
+
+        } else {
+            ContactDao contactDao = new ContactDao(context);
+            message.setOrigin(contactDao.findById(jsonObject.getLong(FIELD_ORIGIN_ID)));
+            message.setDestination(contactDao.findById(jsonObject.getLong(FIELD_DESTINATION_ID)));
+        }
 
         return message;
     }

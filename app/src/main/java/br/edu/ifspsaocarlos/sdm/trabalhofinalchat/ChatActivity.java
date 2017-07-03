@@ -1,5 +1,6 @@
 package br.edu.ifspsaocarlos.sdm.trabalhofinalchat;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -63,7 +64,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         lvHistory.setAdapter(historyChatAdapter);
         btSend = (Button) findViewById(R.id.bt_send);
         btSend.setOnClickListener(this);
-        threadChat.run();
+        threadChat.start();
     }
 
     @Override
@@ -98,29 +99,31 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     }
     private class ChatHandler extends Handler {
-        @Override
-        public void handleMessage(android.os.Message msg) {
-            super.handleMessage(msg);
-            if (msg.what == MENSAGEM_TEXTO) {
-                historyChatAdapter.add(msg.obj.toString());
-                historyChatAdapter.notifyDataSetChanged();
-            }
+        public void handleMessage(String msg) {
+            historyChatAdapter.add(msg);
+            historyChatAdapter.notifyDataSetChanged();
         }
     }
-    private class ThreadChat extends Thread{
+    private class ThreadChat extends Thread {
+        @Override
         public void run() {
-            List<Message> messages = messageDao.findByContact(contact, lastMessageId);
-
-            if (messages != null) {
-                for (Message message : messages) {
-                    historyChatAdapter.add(message.getOrigin().getName() + ": " + message.getBody());
-                    lastMessageId = message.getId();
-                }
-            }
-
             try {
-                sleep(100);
-            } catch (InterruptedException e) {
+                while (true) {
+                    chatHandler.post(new Runnable() {
+                        public void run() {
+                            List<Message> messages = messageDao.findByContact(contact, lastMessageId);
+
+                            if (messages != null) {
+                                for (Message message : messages) {
+                                    chatHandler.handleMessage(message.getOrigin().getName() + ": " + message.getBody());
+                                    lastMessageId = message.getId();
+                                }
+                            }
+                        }
+                    });
+                    sleep(200);
+                }
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
