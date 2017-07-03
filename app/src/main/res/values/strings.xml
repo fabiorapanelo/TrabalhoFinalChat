@@ -14,4 +14,9 @@
     <string name="hint_name">Nome</string>
     <string name="hint_nickname">Apelido</string>
     <string name="add_contact_button">Criar usuário</string>
+
+    <!-- Chat -->
+    <string name="hint_message">Mensagem</string>
+    <string name="send_button">Enviar</string>
+
 </resources>
