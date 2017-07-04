@@ -40,6 +40,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     protected StateManagement stateManagement = StateManagement.getInstance();
 
+    private ListView lvHistory;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,7 +62,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         chatHandler = new ChatHandler();
         threadChat = new ThreadChat();
         historyChatAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
-        ListView lvHistory = (ListView) findViewById(R.id.lv_history);
+        lvHistory = (ListView) findViewById(R.id.lv_history);
         lvHistory.setAdapter(historyChatAdapter);
         btSend = (Button) findViewById(R.id.bt_send);
         btSend.setOnClickListener(this);
@@ -102,6 +104,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         public void handleMessage(String msg) {
             historyChatAdapter.add(msg);
             historyChatAdapter.notifyDataSetChanged();
+
+            lvHistory.setSelection(historyChatAdapter.getCount());
         }
     }
     private class ThreadChat extends Thread {
