@@ -37,11 +37,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //Debug
-        Contact userInfo = new Contact();
-        userInfo.setId(660);
-        userInfo.setName("Robson Teixeira");
-        userInfo.setNickname("robson.teixeira");
-        userInfoDao.save(userInfo);
+        //Contact userInfo = new Contact();
+        //userInfo.setId(660);
+        //userInfo.setName("Robson Teixeira");
+        //userInfo.setNickname("robson.teixeira");
+        //userInfoDao.save(userInfo);
 
         if(this.userExists()){
             this.createViewContactsFragment();

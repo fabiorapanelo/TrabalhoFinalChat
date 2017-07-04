@@ -50,30 +50,34 @@ public class SearchNewMessagesService extends Service implements Runnable {
 
                 Contact currentUser = userInfoDao.find();
 
-                for(Contact contact: contactDao.findAll()){
+                for (Contact contact : contactDao.findAll()) {
 
-                    long contactOpened = stateManagement.getContactOpened();
 
-                    if(contact.getId() != contactOpened){
+                    Message message = messageDao.findLastMessage(contact);
+                    if (message == null) {
+                        message = this.createDefaultMessage(contact, currentUser);
+                    } else {
+                        message.setId(message.getId() + 1);
+                        message.setOrigin(contact);
+                        message.setDestination(currentUser);
+                    }
 
-                        Message message = messageDao.findLastMessage(contact);
-                        if(message == null){
-                            message = this.createDefaultMessage(contact, currentUser);
-                        } else {
-                            message.setId(message.getId() + 1);
-                        }
+                    MessageService messageService = new MessageService();
+                    messageService.getMessages(this, new ServiceListener() {
+                        @Override
+                        public void onSuccess(Object object) {
+                            //If there is messages, show the notification
 
-                        MessageService messageService = new MessageService();
-                        messageService.getMessages(this, new ServiceListener() {
-                            @Override
-                            public void onSuccess(Object object) {
-                                //If there is messages, show the notification
+                            List<Message> messages = (List<Message>) object;
 
-                                List<Message> messages = (List<Message>) object;
+                            if (messages != null && messages.size() > 0) {
 
-                                if(messages != null && messages.size() > 0) {
+                                Message message = messages.get(0);
 
-                                    Message message = messages.get(0);
+                                long contactOpened = stateManagement.getContactOpened();
+
+                                Contact origin = message.getOrigin();
+                                if (origin.getId() != contactOpened) {
 
                                     NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                                     Intent intent = new Intent(SearchNewMessagesService.this, ChatActivity.class);
@@ -85,7 +89,7 @@ public class SearchNewMessagesService extends Service implements Runnable {
                                     builder.setTicker("Nova mensagem de " + message.getOrigin().getName());
                                     builder.setContentTitle("Nova mensagem de " + message.getOrigin().getName());
 
-                                    if(messages.size() == 1){
+                                    if (messages.size() == 1) {
                                         builder.setContentText("Voce tem " + messages.size() + " mensagens");
                                     } else {
                                         builder.setContentText("Voce tem 1 mensagem");
@@ -97,22 +101,21 @@ public class SearchNewMessagesService extends Service implements Runnable {
                                     Notification notification = builder.build();
                                     notification.vibrate = new long[]{100, 250};
                                     nm.notify(R.mipmap.ic_launcher, notification);
-
-                                    messageDao.saveAll(messages);
                                 }
-                            }
 
-                            @Override
-                            public void onError(Exception ex) {
-                                Log.d("SearchNewMessagesServic", ex.getMessage(), ex);
+                                messageDao.saveAll(messages);
                             }
-                        }, message);
+                        }
 
-                    }
+                        @Override
+                        public void onError(Exception ex) {
+                            Log.d("SearchNewMessagesServic", ex.getMessage(), ex);
+                        }
+                    }, message);
 
                 }
 
-            } catch (InterruptedException ie) {
+            }catch(InterruptedException ie){
                 Log.e("SDM", "Erro na recuperação das mensagens");
             }
         }
@@ -125,7 +128,7 @@ public class SearchNewMessagesService extends Service implements Runnable {
         stopSelf();
     }
 
-    protected Message createDefaultMessage(Contact origin, Contact destination){
+    protected Message createDefaultMessage(Contact origin, Contact destination) {
 
         Message defaultMessage = new Message();
 

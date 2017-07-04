@@ -128,4 +128,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        stateManagement.clearContactOpened();
+        super.onDestroy();
+    }
 }
